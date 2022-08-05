@@ -1,5 +1,5 @@
 # Minimum CMake required
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8.12)
 
 project(cloud_protobuf)
 
@@ -7,10 +7,9 @@ project(cloud_protobuf)
 find_package(Protobuf  REQUIRED)
 find_package(eCAL REQUIRED)
 
-set(PROTO_GEN_CXX 1)
-set(PROTO_GEN_JAVA 0)
-set(PROTO_GEN_PYTHON 0)
-set(PROTO_GEN_C 0)
+option(PROTO_GEN_CXX "build CXX protobuf file" OFF)
+option(PROTO_GEN_JAVA "build JAVA protobuf file" OFF)
+option(PROTO_GEN_PYTHON "build PYTHON protobuf file" OFF)
 
 if(protobuf_VERBOSE)
   message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
@@ -66,24 +65,24 @@ foreach(ABS_FIL ${MSG_PROTOS})
 
         list(APPEND MESSAGE_SRC "${MESSAGE_DIR}/${DIR}/${FIL_WE}.pb.cc")
         list(APPEND MESSAGE_HDRS "${MESSAGE_DIR}/${DIR}/${FIL_WE}.pb.h")
-        
-        if(PROTO_GEN_CXX)
-          execute_process(
-            COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE} ${PROTO_FLAGS} --cpp_out=${PROTO_META_BASE_DIR} ${ABS_FIL}
-          )
-        endif(PROTO_GEN_CXX)
 
-        if(PROTO_GEN_JAVA)
+        IF(PROTO_GEN_CXX)
+          execute_process(
+                  COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE} ${PROTO_FLAGS} --cpp_out=${PROTO_META_BASE_DIR} ${ABS_FIL}
+                )
+        ENDIF(PROTO_GEN_CXX)
+
+        IF(PROTO_GEN_JAVA)
           execute_process(
             COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE} ${PROTO_FLAGS} --java_out=${JAVA_PROTO_META_BASE_DIR} ${ABS_FIL}
           )
-        endif(PROTO_GEN_JAVA)
+        ENDIF(PROTO_GEN_JAVA)
 
-        if(PROTO_GEN_PYTHON)
+        IF(PROTO_GEN_PYTHON)
         execute_process(
           COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE} ${PROTO_FLAGS} --python_out=${PYTHON_PROTO_META_BASE_DIR} -I ${ABS_FIL}
         )
-        endif(PROTO_GEN_PYTHON)
+        ENDIF(PROTO_GEN_PYTHON)
 
 endforeach()
 
@@ -96,4 +95,5 @@ target_link_libraries(${PROJECT_NAME}
                     eCAL::core
                     protobuf::libprotobuf
 )
+
 

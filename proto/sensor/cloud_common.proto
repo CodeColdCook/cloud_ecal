@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package SensorMsg;
+
+import "sensor/cloudxyz.proto";
+import "sensor/cloudxyzi.proto";
+import "sensor/cloudxyzit.proto";
